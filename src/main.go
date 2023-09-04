@@ -26,7 +26,9 @@ func main() {
 
 		file := cli.NameSelector(names)
 
-		config.WriteConfig(file)
+		config.UpdateConfig("current_dir", file)
+
+		config.WriteConfig()
 
 	} else {
 		args := strings.Join(os.Args[1:], " ")

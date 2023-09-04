@@ -10,6 +10,15 @@ import (
 	"github.com/gookit/config/v2/toml"
 )
 
+func InitConfig() {
+	config.WithOptions(config.ParseEnv)
+	config.WithOptions(func(opt *config.Options) {
+		opt.DecoderConfig.TagName = "config"
+	})
+
+	config.AddDriver(toml.Driver)
+}
+
 func getConfigFile() string {
 	conf, err := os.UserConfigDir()
 	if err != nil {
@@ -19,7 +28,7 @@ func getConfigFile() string {
 	config_dir := filepath.Join(conf, "comn")
 
 	if _, err := os.Stat(config_dir); os.IsNotExist(err) {
-		os.Mkdir(config_dir ,0700)
+		os.Mkdir(config_dir, 0700)
 	}
 
 	config_file := filepath.Join(config_dir, "config.toml")
@@ -34,15 +43,7 @@ func getConfigFile() string {
 func ReadConfig() MyConfig {
 	var myconfig MyConfig
 
-
 	config_file := getConfigFile()
-
-	config.WithOptions(config.ParseEnv)
-	config.WithOptions(func(opt *config.Options) {
-		opt.DecoderConfig.TagName = "config"
-	})
-
-	config.AddDriver(toml.Driver)
 
 	err := config.LoadFiles(config_file)
 	if err != nil {
@@ -54,27 +55,19 @@ func ReadConfig() MyConfig {
 		panic(err)
 	}
 
-	buf := new(bytes.Buffer)
-
-	config.Set("current_dir", "test")
-
-	_, err = config.DumpTo(buf, config.Toml)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-	}
-
-	os.WriteFile("my-config.toml", buf.Bytes(), 0755)
-
 	return myconfig
 }
 
-func WriteConfig(newdir string) {
+func UpdateConfig(key string, value string) {
+	config.Set(key, value)
 
+}
+
+func WriteConfig() {
 	config_file := getConfigFile()
 
 	buf := new(bytes.Buffer)
 
-	config.Set("current_dir", newdir)
 
 	_, err := config.DumpTo(buf, config.Toml)
 

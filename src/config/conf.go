@@ -17,7 +17,7 @@ func ReadConfig() MyConfig {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
-	config_file := filepath.Join(conf, "dockern", "config.toml")
+	config_file := filepath.Join(conf, "comn", "config.toml")
 
 	config.WithOptions(config.ParseEnv)
 	config.WithOptions(func(opt *config.Options) {
@@ -55,7 +55,7 @@ func WriteConfig(newdir string) {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
-	configFile := filepath.Join(conf, "dockern", "config.toml")
+	configFile := filepath.Join(conf, "comn", "config.toml")
 
 	// オプションの設定は不要
 

@@ -1,5 +1,5 @@
 {
     "yaml.schemas": {
-        "https://json.schemastore.org/github-action.json": "file:///home/mn/Projects/dockern/.github/workflows/goreleaser.yml"
+        "https://json.schemastore.org/github-action.json": "file:///home/mn/Projects/comn/.github/workflows/goreleaser.yml"
     }
 }

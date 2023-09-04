@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/motty-mio2/dockern/src/cli"
-	"github.com/motty-mio2/dockern/src/config"
+	"github.com/motty-mio2/comn/src/cli"
+	"github.com/motty-mio2/comn/src/config"
 )
 
 func main() {

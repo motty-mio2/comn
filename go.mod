@@ -1,4 +1,4 @@
-module github.com/motty-mio2/dockern
+module github.com/motty-mio2/comn
 
 go 1.15
 

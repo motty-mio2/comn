@@ -72,10 +72,6 @@ func WriteConfig(newdir string) {
 
 	config_file := getConfigFile()
 
-	// オプションの設定は不要
-
-	config.AddDriver(toml.Driver)
-
 	buf := new(bytes.Buffer)
 
 	config.Set("current_dir", newdir)

@@ -10,6 +10,8 @@ import (
 )
 
 func main() {
+	config.InitConfig()
+
 	conf := config.ReadConfig()
 
 	if len(os.Args) == 1 {

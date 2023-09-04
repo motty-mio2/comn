@@ -3,32 +3,14 @@ package cli
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
-	"os/user"
-	"strings"
 
-	"github.com/koki-develop/go-fzf"
+	"github.com/motty-mio2/dockern/src/functions"
 )
 
-func DockerWrapper(pwd string) {
-	cmd := exec.Command("ls")
-
-	// cmd.Dir="~"
-	cmd.Dir = pwd
-
-	result, err := cmd.Output()
-
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-	}
-
-	fmt.Println(string(result))
-}
-
-func ComposeWrapper(pwd string, name string, args string) {
-	cmd := exec.Command("docker", "compose", args)
+func ComposeWrapper(backend string, pwd string, name string, args string) {
+	cmd := exec.Command(backend, "compose", args)
 	cmd.Dir = pwd + "/" + name
 
 	stdout, err := cmd.StdoutPipe()
@@ -57,31 +39,12 @@ func ComposeWrapper(pwd string, name string, args string) {
 }
 
 func PickupComposeSpace(compose_dir string) string {
-	usr, _ := user.Current()
-
-	expandedPath := strings.Replace(compose_dir, "~", usr.HomeDir, 1)
-
-	files, _ := os.ReadDir(expandedPath)
+	files, _ := os.ReadDir(functions.ExpandHome(compose_dir))
 
 	var names []string
 	for _, entry := range files {
 		names = append(names, entry.Name())
 	}
 
-	return nameSelector(names)
-
-}
-
-func nameSelector(namespaces []string) string {
-	f, err := fzf.New()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	idxs, err := f.Find(namespaces, func(i int) string { return namespaces[i] })
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return namespaces[idxs[0]]
+	return functions.FzfSelector(names)
 }

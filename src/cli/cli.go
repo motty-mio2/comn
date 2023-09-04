@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/motty-mio2/dockern/src/functions"
+	"github.com/motty-mio2/comn/src/functions"
 )
 
 func ComposeWrapper(backend string, pwd string, name string, args string) {

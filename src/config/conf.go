@@ -24,7 +24,7 @@ func getConfigFile() string {
 
 	config_file := filepath.Join(config_dir, "config.toml")
 
-	if _, err := os.Stat(config_dir); os.IsNotExist(err) {
+	if _, err := os.Stat(config_file); os.IsNotExist(err) {
 		fmt.Println("config file does not exist")
 	}
 

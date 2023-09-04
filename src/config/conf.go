@@ -10,14 +10,32 @@ import (
 	"github.com/gookit/config/v2/toml"
 )
 
-func ReadConfig() MyConfig {
-	var myconfig MyConfig
-
+func getConfigFile() string {
 	conf, err := os.UserConfigDir()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
-	config_file := filepath.Join(conf, "comn", "config.toml")
+
+	config_dir := filepath.Join(conf, "comn")
+
+	if _, err := os.Stat(config_dir); os.IsNotExist(err) {
+		os.Mkdir(config_dir ,0700)
+	}
+
+	config_file := filepath.Join(config_dir, "config.toml")
+
+	if _, err := os.Stat(config_dir); os.IsNotExist(err) {
+		fmt.Println("config file does not exist")
+	}
+
+	return config_file
+}
+
+func ReadConfig() MyConfig {
+	var myconfig MyConfig
+
+
+	config_file := getConfigFile()
 
 	config.WithOptions(config.ParseEnv)
 	config.WithOptions(func(opt *config.Options) {
@@ -26,7 +44,7 @@ func ReadConfig() MyConfig {
 
 	config.AddDriver(toml.Driver)
 
-	err = config.LoadFiles(config_file)
+	err := config.LoadFiles(config_file)
 	if err != nil {
 		panic(err)
 	}
@@ -51,11 +69,8 @@ func ReadConfig() MyConfig {
 }
 
 func WriteConfig(newdir string) {
-	conf, err := os.UserConfigDir()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-	}
-	configFile := filepath.Join(conf, "comn", "config.toml")
+
+	config_file := getConfigFile()
 
 	// オプションの設定は不要
 
@@ -65,11 +80,11 @@ func WriteConfig(newdir string) {
 
 	config.Set("current_dir", newdir)
 
-	_, err = config.DumpTo(buf, config.Toml)
+	_, err := config.DumpTo(buf, config.Toml)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 	}
 
-	os.WriteFile(configFile, buf.Bytes(), 0755)
+	os.WriteFile(config_file, buf.Bytes(), 0755)
 }

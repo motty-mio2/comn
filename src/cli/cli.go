@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/user"
+	"strings"
 
 	"github.com/koki-develop/go-fzf"
 )
@@ -54,7 +56,23 @@ func ComposeWrapper(pwd string, name string, args string) {
 	}
 }
 
-func NameSelector(namespaces []string) string {
+func PickupComposeSpace(compose_dir string) string {
+	usr, _ := user.Current()
+
+	expandedPath := strings.Replace(compose_dir, "~", usr.HomeDir, 1)
+
+	files, _ := os.ReadDir(expandedPath)
+
+	var names []string
+	for _, entry := range files {
+		names = append(names, entry.Name())
+	}
+
+	return nameSelector(names)
+
+}
+
+func nameSelector(namespaces []string) string {
 	f, err := fzf.New()
 	if err != nil {
 		log.Fatal(err)

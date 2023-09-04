@@ -9,8 +9,8 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${file}",
-            "args": ["set"]
+            "program": "${file}"
+            // "args": ["set"]
         }
 
     ]

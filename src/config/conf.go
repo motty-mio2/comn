@@ -17,9 +17,22 @@ func InitConfig() {
 	})
 
 	config.AddDriver(toml.Driver)
+
+	_, err:=getConfigFile()
+
+	if err != nil {
+
+	}
 }
 
-func getConfigFile() string {
+func CreateEmptyConfig(){
+	config.Set("compose_dir", "")
+	config.Set("current_dir", "")
+
+	WriteConfig()
+}
+
+func getConfigFile() (string, error) {
 	conf, err := os.UserConfigDir()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -34,16 +47,16 @@ func getConfigFile() string {
 	config_file := filepath.Join(config_dir, "config.toml")
 
 	if _, err := os.Stat(config_file); os.IsNotExist(err) {
-		fmt.Println("config file does not exist")
+		return config_file, fmt.Errorf("file: %s does not exist", config_file)
 	}
 
-	return config_file
+	return config_file, nil
 }
 
 func ReadConfig() MyConfig {
 	var myconfig MyConfig
 
-	config_file := getConfigFile()
+	config_file := getConfigFile(true)
 
 	err := config.LoadFiles(config_file)
 	if err != nil {
@@ -64,10 +77,9 @@ func UpdateConfig(key string, value string) {
 }
 
 func WriteConfig() {
-	config_file := getConfigFile()
+	config_file := getConfigFile(false)
 
 	buf := new(bytes.Buffer)
-
 
 	_, err := config.DumpTo(buf, config.Toml)
 

@@ -17,14 +17,7 @@ func main() {
 	if len(os.Args) == 1 {
 		fmt.Println(conf.CurrentDir)
 	} else if os.Args[1] == "set" {
-		files, _ := os.ReadDir(conf.ComposeDir)
-
-		var names []string
-		for _, entry := range files {
-			names = append(names, entry.Name())
-		}
-
-		file := cli.NameSelector(names)
+		file := cli.PickupComposeSpace(conf.ComposeDir)
 
 		config.UpdateConfig("current_dir", file)
 

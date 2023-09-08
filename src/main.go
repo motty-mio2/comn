@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/user"
 	"strings"
 
 	"github.com/motty-mio2/comn/src/cli"
@@ -27,8 +26,6 @@ func main() {
 	} else {
 		args := strings.Join(os.Args[1:], " ")
 
-		usr, _ := user.Current()
-
-		cli.ComposeWrapper(conf.Backend, strings.Replace(conf.ComposeDir, "~", usr.HomeDir, 1), conf.CurrentDir, args)
+		cli.ComposeWrapper(conf.Backend, conf.ComposeDir, conf.CurrentDir, args)
 	}
 }

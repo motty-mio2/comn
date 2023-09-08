@@ -4,13 +4,50 @@ import (
 	"bytes"
 	"fmt"
 	"os"
+	"os/user"
 	"path/filepath"
+	"strings"
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/toml"
 	"github.com/motty-mio2/comn/src/cli"
 	"github.com/motty-mio2/comn/src/functions"
 )
+
+
+func getConfigFile() (string, error) {
+	conf, err := os.UserConfigDir()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
+
+	config_dir := filepath.Join(conf, "comn")
+
+	if _, err := os.Stat(config_dir); os.IsNotExist(err) {
+		os.Mkdir(config_dir, 0700)
+	}
+
+	config_file := filepath.Join(config_dir, "config.toml")
+
+	if _, err := os.Stat(config_file); os.IsNotExist(err) {
+		return config_file, fmt.Errorf("file: %s does not exist", config_file)
+	}
+
+	return config_file, nil
+}
+
+func validateHomeDir(path string) string {
+	usr, _ := user.Current()
+
+	if strings.Contains(path, "~") {
+		return strings.Replace(path, "~", usr.HomeDir, 1)
+	}	else if !strings.HasPrefix(path, "/") {
+		return filepath.Join(usr.HomeDir, path)
+	}	else {
+		return path
+	}
+}
+
 
 func InitConfig() {
 	config.WithOptions(config.ParseEnv)
@@ -51,26 +88,6 @@ func CreateEmptyConfig() {
 	os.Exit(0)
 }
 
-func getConfigFile() (string, error) {
-	conf, err := os.UserConfigDir()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-	}
-
-	config_dir := filepath.Join(conf, "comn")
-
-	if _, err := os.Stat(config_dir); os.IsNotExist(err) {
-		os.Mkdir(config_dir, 0700)
-	}
-
-	config_file := filepath.Join(config_dir, "config.toml")
-
-	if _, err := os.Stat(config_file); os.IsNotExist(err) {
-		return config_file, fmt.Errorf("file: %s does not exist", config_file)
-	}
-
-	return config_file, nil
-}
 
 func ReadConfig() MyConfig {
 	var myconfig MyConfig
@@ -86,6 +103,8 @@ func ReadConfig() MyConfig {
 	if err != nil {
 		panic(err)
 	}
+
+	myconfig.ComposeDir = validateHomeDir(myconfig.ComposeDir)
 
 	return myconfig
 }
